@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -52,6 +53,7 @@ public class MongoCacheTest {
 
     @Before
     public void setup() {
+        mongoTemplate.remove(new Query(), COLLECTION_NAME);
         cache = new MongoCache(CACHE_NAME, COLLECTION_NAME, mongoTemplate, TTL);
     }
 
@@ -65,6 +67,24 @@ public class MongoCacheTest {
 
         final Object nativeCache = cache.getNativeCache();
         Assert.assertEquals(mongoTemplate, nativeCache);
+
+        final MongoCache mongoCache = new MongoCache(CACHE_NAME, COLLECTION_NAME, mongoTemplate);
+        Assert.assertNotEquals(0, mongoCache.getTtl());
+    }
+
+    /**
+     * Test for {@link MongoCache#clear()}.
+     */
+    @Test
+    public void clear() {
+        cache.put("key1", "value");
+        cache.put("key2", "value");
+        long count = mongoTemplate.count(new Query(), COLLECTION_NAME);
+        Assert.assertEquals(2, count);
+
+        cache.clear();
+        count = mongoTemplate.count(new Query(), COLLECTION_NAME);
+        Assert.assertEquals(0, count);
     }
 
     /**
@@ -79,6 +99,15 @@ public class MongoCacheTest {
         final Cache.ValueWrapper wrapper = cache.get(key);
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(value, wrapper.get());
+    }
+
+    /**
+     * Test for {@link MongoCache#getCollectionName()}.
+     */
+    @Test
+    public void getCollectionName() {
+        final String collectionName = cache.getCollectionName();
+        Assert.assertEquals(COLLECTION_NAME, collectionName);
     }
 
     /**
@@ -117,8 +146,11 @@ public class MongoCacheTest {
         final String value = "value";
         cache.put(key, value);
 
-        final String valueInCache = cache.get(key, String.class);
+        String valueInCache = cache.get(key, String.class);
         Assert.assertEquals(value, valueInCache);
+
+        valueInCache = cache.get("key1", String.class);
+        Assert.assertNull(valueInCache);
 
         cache.get(key, Double.class);
     }
@@ -164,5 +196,20 @@ public class MongoCacheTest {
         cache.put(key, null);
         wrapper = cache.get(key);
         Assert.assertNull(wrapper);
+    }
+
+    /**
+     * Test for {@link MongoCache#putIfAbsent(Object, Object)}.
+     */
+    @Test
+    public void putIfAbsent() {
+        final String key = "key";
+        final String value = "value";
+        Cache.ValueWrapper wrapper = cache.putIfAbsent(key, value);
+        Assert.assertNull(wrapper);
+
+        wrapper = cache.putIfAbsent(key, value);
+        Assert.assertNotNull(wrapper);
+        Assert.assertEquals(value, wrapper.get());
     }
 }

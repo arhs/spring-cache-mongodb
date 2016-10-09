@@ -41,13 +41,6 @@ public class MongoCacheManager extends AbstractCacheManager {
 
     /**
      * Constructor.
-     */
-    public MongoCacheManager() {
-        this(Collections.EMPTY_LIST);
-    }
-
-    /**
-     * Constructor.
      *
      * @param initialCaches the caches to make available on startup.
      */

@@ -33,7 +33,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -60,6 +62,21 @@ public class MongoCacheManagerTest {
         MongoCacheBuilder defaultCacheBuilder = MongoCacheBuilder.newInstance(COLLECTION_NAME, mongoTemplate, CACHE_NAME);
         this.manager = new MongoCacheManager(Arrays.asList(defaultCacheBuilder));
         manager.afterPropertiesSet();
+    }
+
+    /**
+     * Test for {@link MongoCacheManager#loadCaches()}
+     */
+    @Test
+    public void loadCaches() {
+        final Collection<MongoCacheBuilder> initialCaches = new ArrayList<>();
+        final MongoCacheBuilder cache = MongoCacheBuilder.newInstance("test", mongoTemplate, "cache");
+        initialCaches.add(cache);
+
+        final MongoCacheManager manager = new MongoCacheManager(initialCaches);
+        final Collection<? extends Cache> caches = manager.loadCaches();
+        Assert.assertNotNull(caches);
+        Assert.assertEquals(1, caches.size());
     }
 
     /**
