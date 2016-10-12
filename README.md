@@ -70,14 +70,15 @@ spring:
   cache:
     mongo:
       caches:
-      	# TTL (in seconds).
-        ttl: 
-		# MongoDB collection name.
-		collectionName:
-		# Cache name for the @Cacheable annotation.
-		cacheName:
-		# Value that indicates if the collection must be flushed when the application starts.
-		flushOnBoot:
+        -
+      	  # TTL (in seconds).
+          ttl: 
+          # MongoDB collection name.
+          collectionName:
+          # Cache name for the @Cacheable annotation.
+          cacheName:
+          # Value that indicates if the collection must be flushed when the application starts.
+          flushOnBoot:
 ```
 
 ### How to use cache?
