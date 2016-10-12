@@ -9,7 +9,7 @@
 
 ## Install
 
-To install this library, you have need:
+To install this library, you need:
 
 - [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 - [Maven 3](https://maven.apache.org/)
