@@ -9,10 +9,54 @@
 
 ## Install
 
+To install this library, you have need:
+
+- [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+- [Maven 3](https://maven.apache.org/)
+
 ```bash
 git clone https://github.com/arhs/spring-cache-mongo.git
 cd spring-cache-mongo
 mvn clean install
+```
+
+## Usage
+
+### Java
+
+The first way is to create a Java Bean in a [configuration class](http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-configuration-classes.html):
+
+```java
+@Autowired
+private MongoTemplate mongoTemplate;
+
+@Bean
+public CacheManager cacheManager() {
+	MongoCacheBuilder cache = MongoCacheBuilder.newInstance("collectionName", mongoTemplate, "cacheName");
+	cache.withTTL(604800);
+	List<Cache> caches = new ArrayList<>();
+	caches.add(cache);
+
+	return new MongoCacheManager(caches);
+}
+```
+
+### Properties
+
+The second way is to use properties to create one or several caches:
+
+```
+# TTL (in seconds).
+spring.cache.mongo.caches[0].ttl =
+
+# MongoDB collection name.
+spring.cache.mongo.caches[0].collectionName =
+
+# Cache name for the @Cacheable annotation.
+spring.cache.mongo.caches[0].cacheName =
+
+# Value that indicates if the collection must be flushed when the application starts.
+spring.cache.mongo.caches[0].flushOnBoot = false
 ```
 
 ## License
