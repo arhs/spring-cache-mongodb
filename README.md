@@ -50,7 +50,7 @@ The second way is to use properties to create one or several caches.
 #### .properties
 
 ```properties
-# TTL (in seconds).
+# TTL (in seconds). This property is optional, the default value is: 7 days.
 spring.cache.mongo.caches[0].ttl =
 
 # MongoDB collection name.
@@ -60,7 +60,7 @@ spring.cache.mongo.caches[0].collectionName =
 spring.cache.mongo.caches[0].cacheName =
 
 # Value that indicates if the collection must be flushed when the application starts.
-spring.cache.mongo.caches[0].flushOnBoot = false
+spring.cache.mongo.caches[0].flushOnBoot =
 ```
 
 #### YAML
