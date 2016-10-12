@@ -24,7 +24,7 @@ mvn clean install
 
 ### Custom configuration
 
-The first way is to create a Java Bean in a [configuration class](http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-configuration-classes.html):
+To customize the creation of a cache manager, create a Java Bean in a [configuration class](http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-configuration-classes.html):
 
 ```java
 @Autowired
@@ -45,7 +45,7 @@ public CacheManager cacheManager() {
 
 ### Autoconfiguration
 
-The second way is to use properties to create one or several caches.
+There is also an autoconfiguration class that will setup everything for you provided you have expressed the following properties.
 
 #### .properties
 
@@ -82,7 +82,7 @@ spring:
 
 ### How to use cache?
 
-After have define a cache, the [annotation](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/cache.html) `Cacheable` must be used. In the following example, the cache "myCache" is used like this:
+After the cache has been configured, you can use the `Cacheable` [annotation](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/cache.html). In the following example, the cache "myCache" is used like this:
 
 ```java
 @Cacheable(value = "myCache", key = "#id")
@@ -91,7 +91,9 @@ public Model getModel(String id) {
 }
 ```
 
-The `id` parameter is used as document identifier. The `Model` object will be stored in MongoDB collection for future use (as the TTL has not expired).
+The `id` parameter is used as document identifier. Note that the cache key must be a of type `java.lang.String`.
+
+The `Model` object will be stored in MongoDB collection for future use (as the TTL has not expired). Note that cache elements must be serializable (i.e. implement `java.io.Serializable`).
 
 ## License
 
