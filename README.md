@@ -22,7 +22,7 @@ mvn clean install
 
 ## Usage
 
-### Java
+### Custom configuration
 
 The first way is to create a Java Bean in a [configuration class](http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-configuration-classes.html):
 
@@ -32,20 +32,24 @@ private MongoTemplate mongoTemplate;
 
 @Bean
 public CacheManager cacheManager() {
+	// Create a "cacheName" cache that will use the collection "collectionName" with a TTL 7 days.
 	MongoCacheBuilder cache = MongoCacheBuilder.newInstance("collectionName", mongoTemplate, "cacheName");
 	cache.withTTL(604800);
 	List<Cache> caches = new ArrayList<>();
 	caches.add(cache);
 
+	// Create a manager which will make available the cache created previously.
 	return new MongoCacheManager(caches);
 }
 ```
 
-### Properties
+### Autoconfiguration
 
-The second way is to use properties to create one or several caches:
+The second way is to use properties to create one or several caches.
 
-```
+#### .properties
+
+```properties
 # TTL (in seconds).
 spring.cache.mongo.caches[0].ttl =
 
@@ -58,6 +62,36 @@ spring.cache.mongo.caches[0].cacheName =
 # Value that indicates if the collection must be flushed when the application starts.
 spring.cache.mongo.caches[0].flushOnBoot = false
 ```
+
+#### YAML
+
+```yml
+spring:
+  cache:
+    mongo:
+      caches:
+      	# TTL (in seconds).
+        ttl: 
+		# MongoDB collection name.
+		collectionName:
+		# Cache name for the @Cacheable annotation.
+		cacheName:
+		# Value that indicates if the collection must be flushed when the application starts.
+		flushOnBoot:
+```
+
+### How to use cache?
+
+After have define a cache, the [annotation](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/cache.html) `Cacheable` must be used. In the following example, the cache "myCache" is used like this:
+
+```java
+@Cacheable(value = "myCache", key = "#id")
+public Model getModel(String id) {
+	// [...]
+}
+```
+
+The `id` parameter is used as document identifier. The `Model` object will be stored in MongoDB collection for future use (as the TTL has not expired).
 
 ## License
 
