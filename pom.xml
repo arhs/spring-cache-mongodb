@@ -26,6 +26,15 @@
 
     <developers>
         <developer>
+            <id>priplada</id>
+            <name>Daniel Priplata</name>
+            <organization>ARHS Spikeseed</organization>
+            <organizationUrl>https://www.arhs-group.com/</organizationUrl>
+            <roles>
+                <role>IT Architect</role>
+            </roles>
+        </developer>
+        <developer>
             <id>schumacy</id>
             <name>Cyril Schumacher</name>
             <organization>ARHS Spikeseed</organization>
@@ -46,20 +55,6 @@
         <system>GitHub Issues</system>
         <url>https://github.com/arhs/spring-cache-mongo/issues</url>
     </issueManagement>
-    <distributionManagement>
-        <repository>
-            <id>arhs-repo-releases</id>
-            <name>ARHS Repository</name>
-            <layout>default</layout>
-            <url>http://maven.aris-lux.lan/nexus/content/repositories/ARhS/</url>
-        </repository>
-        <snapshotRepository>
-            <id>arhs-repo-snapshots</id>
-            <name>ARHS Repository</name>
-            <layout>default</layout>
-            <url>http://maven.aris-lux.lan/nexus/content/repositories/arhs-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
