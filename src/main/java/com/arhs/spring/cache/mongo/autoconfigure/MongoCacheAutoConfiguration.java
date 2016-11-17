@@ -28,6 +28,7 @@ import com.arhs.spring.cache.mongo.MongoCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -56,10 +57,12 @@ public class MongoCacheAutoConfiguration {
 
     /**
      * Creates a instance of the {@code CacheManager} class.
+     * Only create it if there is at least one cache defined.
      *
      * @return the instance of {@code CacheManager} class.
      */
     @Bean
+    @ConditionalOnProperty("spring.cache.mongo.caches[0].cacheName")
     public CacheManager mongoCacheManager() {
         return new MongoCacheManager(mongoCacheBuilders());
     }
@@ -68,7 +71,7 @@ public class MongoCacheAutoConfiguration {
 
         List<MongoCacheBuilder> builders = new ArrayList<>();
 
-        if(properties.getCaches() != null) {
+        if (properties.getCaches() != null) {
             for (MongoCacheProperties mongoCacheProperties : properties.getCaches()) {
                 builders.add(
                         MongoCacheBuilder
