@@ -9,6 +9,17 @@
 
 ## Install
 
+### Maven dependency
+
+```xml
+<dependency>
+  <groupId>com.arhs-group</groupId>
+  <artifactId>spring-cache-mongodb</artifactId>
+  <version>1.0.1</version>
+</dependency>
+```
+
+### From source
 To install this library, you need:
 
 - [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
