@@ -53,8 +53,8 @@
     <contributors />
 
     <scm>
-        <connection>scm:git:git://github.com/arhs/spring-cache-mongodb.git</connection>
-        <developerConnection>scm:git:git://github.com/arhs/spring-cache-mongodb.git</developerConnection>
+        <connection>scm:git:https://github.com/arhs/spring-cache-mongodb.git</connection>
+        <developerConnection>scm:git:https://github.com/arhs/spring-cache-mongodb.git</developerConnection>
         <url>https://github.com/arhs/spring-cache-mongodb</url>
         <tag>spring-cache-mongodb-1.0.0</tag>
     </scm>
