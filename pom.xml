@@ -12,7 +12,7 @@
 
     <groupId>com.arhs-group</groupId>
     <artifactId>spring-cache-mongodb</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
 
     <name>MongoDB for Spring Cache</name>
     <description>Spring Cache implementation based on MongoDB</description>
@@ -56,7 +56,7 @@
         <connection>scm:git:https://github.com/arhs/spring-cache-mongodb.git</connection>
         <developerConnection>scm:git:https://github.com/arhs/spring-cache-mongodb.git</developerConnection>
         <url>https://github.com/arhs/spring-cache-mongodb</url>
-        <tag>spring-cache-mongodb-1.0.0</tag>
+        <tag>spring-cache-mongodb-1.0.1</tag>
     </scm>
     <issueManagement>
         <system>GitHub Issues</system>
