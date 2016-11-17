@@ -32,14 +32,16 @@ import org.springframework.cache.Cache;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.concurrent.Callable;
 
 /**
  * Unit tests for {@link MongoCache}.
  *
  * @author ARHS Spikeseed
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
 public class MongoCacheTest {
 
@@ -211,5 +213,29 @@ public class MongoCacheTest {
         wrapper = cache.putIfAbsent(key, value);
         Assert.assertNotNull(wrapper);
         Assert.assertEquals(value, wrapper.get());
+    }
+
+    /**
+     * Test for {@link MongoCache#get(Object, java.util.concurrent.Callable)}.
+     */
+    @Test
+    public void getWithCallable() {
+        final String key = "key";
+        final String value = "value";
+        final Callable<String> valueLoader = () -> "newValue";
+        final Callable<String> valueLoader2 = () -> "newValue2";
+
+        String cached = cache.get(key, String.class);
+        Assert.assertNull(cached);
+
+        cached = cache.get(key, valueLoader);
+        Assert.assertEquals("newValue", cached);
+
+        cached = cache.get(key, String.class);
+        Assert.assertEquals("newValue", cached);
+
+        cached = cache.get(key, valueLoader2);
+        Assert.assertEquals("newValue", cached);
+
     }
 }

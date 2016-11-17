@@ -25,7 +25,7 @@ package com.arhs.spring.cache.mongo;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.springframework.boot.test.EnvironmentTestUtils;
+import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**

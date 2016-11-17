@@ -26,6 +26,7 @@ package com.arhs.spring.cache.mongo;
 import com.arhs.spring.cache.mongo.domain.CacheDocument;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import org.mockito.internal.matchers.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -44,6 +45,7 @@ import java.io.*;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -64,6 +66,8 @@ public class MongoCache implements Cache {
     private final String cacheName;
     private final MongoTemplate mongoTemplate;
     private final long ttl;
+
+    private final Object lock = new Object();
 
     /**
      * Constructor.
@@ -152,6 +156,39 @@ public class MongoCache implements Cache {
         } catch (ClassCastException e) {
             throw new IllegalStateException("Unable to cast the object.", e);
         }
+    }
+
+    @Override
+    public <T> T get(Object key, Callable<T> valueLoader) {
+        Assert.isTrue(key instanceof String, "'key' must be an instance of 'java.lang.String'.");
+        Assert.notNull(valueLoader, "'valueLoader' must not be null");
+
+        Object cached = getFromCache(key);
+        if (cached != null) {
+            return (T) cached;
+        }
+
+        synchronized (lock) {
+            cached = getFromCache(key);
+            if (cached != null) {
+                return (T) cached;
+            }
+
+            T value;
+            try {
+                value = valueLoader.call();
+            } catch (Throwable ex) {
+                throw new ValueRetrievalException(key, valueLoader, ex);
+            }
+
+            ValueWrapper newCachedValue = putIfAbsent(key, value);
+            if (newCachedValue != null) {
+                return (T) newCachedValue.get();
+            } else {
+                return value;
+            }
+        }
+
     }
 
     /**

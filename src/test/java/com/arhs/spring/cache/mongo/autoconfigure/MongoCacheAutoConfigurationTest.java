@@ -31,14 +31,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Unit tests for {@code MongoCacheAutoConfiguration} class.
  *
  * @author ARHS Spikeseed
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfiguration.class)
 public class MongoCacheAutoConfigurationTest extends UnitTestBase {
 
