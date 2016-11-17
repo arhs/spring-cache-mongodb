@@ -16,7 +16,7 @@ To install this library, you need:
 
 ```bash
 git clone https://github.com/arhs/spring-cache-mongodb.git
-cd spring-cache-mongo
+cd spring-cache-mongodb
 mvn clean install
 ```
 
