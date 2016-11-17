@@ -68,17 +68,19 @@ public class MongoCacheAutoConfiguration {
 
         List<MongoCacheBuilder> builders = new ArrayList<>();
 
-        for (MongoCacheProperties mongoCacheProperties : properties.getCaches()) {
-            builders.add(
-                    MongoCacheBuilder
-                            .newInstance(
-                                    mongoCacheProperties.getCollectionName(),
-                                    mongoTemplate,
-                                    mongoCacheProperties.getCacheName()
-                            )
-                            .withTTL(mongoCacheProperties.getTtl())
-                            .withFlushOnBoot(mongoCacheProperties.isFlushOnBoot())
-            );
+        if(properties.getCaches() != null) {
+            for (MongoCacheProperties mongoCacheProperties : properties.getCaches()) {
+                builders.add(
+                        MongoCacheBuilder
+                                .newInstance(
+                                        mongoCacheProperties.getCollectionName(),
+                                        mongoTemplate,
+                                        mongoCacheProperties.getCacheName()
+                                )
+                                .withTTL(mongoCacheProperties.getTtl())
+                                .withFlushOnBoot(mongoCacheProperties.isFlushOnBoot())
+                );
+            }
         }
 
         return builders;
