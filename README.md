@@ -15,7 +15,7 @@ To install this library, you need:
 - [Maven 3](https://maven.apache.org/)
 
 ```bash
-git clone https://github.com/arhs/spring-cache-mongo.git
+git clone https://github.com/arhs/spring-cache-mongodb.git
 cd spring-cache-mongo
 mvn clean install
 ```
