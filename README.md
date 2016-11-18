@@ -133,9 +133,9 @@ The `Model` object will be stored in MongoDB collection for future use (as the T
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg
 [license-url]: LICENSE
-[travis-image]: https://travis-ci.org/arhs/spring-cache-mongo.svg?branch=master
-[travis-url]: https://travis-ci.org/arhs/spring-cache-mongo
+[travis-image]: https://travis-ci.org/arhs/spring-cache-mongodb.svg?branch=master
+[travis-url]: https://travis-ci.org/arhs/spring-cache-mongodb
 [standard-readme-image]: https://img.shields.io/badge/standard--readme-OK-green.svg
 [standard-readme-url]: https://github.com/RichardLitt/standard-readme
-[coveralls-image]: https://coveralls.io/repos/github/arhs/spring-cache-mongo/badge.svg
-[coveralls-url]: https://coveralls.io/github/arhs/spring-cache-mongo
+[coveralls-image]: https://coveralls.io/repos/github/arhs/spring-cache-mongodb/badge.svg
+[coveralls-url]: https://coveralls.io/github/arhs/spring-cache-mongodb
