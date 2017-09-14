@@ -24,9 +24,10 @@
 package com.arhs.spring.cache.mongo;
 
 import com.arhs.spring.cache.mongo.domain.CacheDocument;
+import com.arhs.spring.cache.mongo.serializer.JavaSerializer;
+import com.arhs.spring.cache.mongo.serializer.Serializer;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import org.mockito.internal.matchers.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -68,6 +69,7 @@ public class MongoCache implements Cache {
     private final long ttl;
 
     private final Object lock = new Object();
+    private Serializer serializer;
 
     /**
      * Constructor.
@@ -89,7 +91,20 @@ public class MongoCache implements Cache {
      * @param ttl            a time-to-live (in seconds).
      */
     public MongoCache(String cacheName, String collectionName, MongoTemplate mongoTemplate, long ttl) {
-        this(cacheName, collectionName, mongoTemplate, ttl, false);
+        this(cacheName, collectionName, mongoTemplate, ttl, false, new JavaSerializer());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param cacheName	     a cache name.
+     * @param collectionName a collection name.
+     * @param mongoTemplate  a {@link MongoTemplate} instance.
+     * @param ttl			 a time-to-live (in seconds).
+     * @param serializer     a serializer.
+     */
+    public MongoCache(String cacheName, String collectionName, MongoTemplate mongoTemplate, long ttl, Serializer serializer) {
+        this(cacheName, collectionName, mongoTemplate, ttl, false, serializer);
     }
 
     /**
@@ -102,6 +117,20 @@ public class MongoCache implements Cache {
      * @param flushOnBoot    a value that indicates if the collection must be always flush.
      */
     public MongoCache(String cacheName, String collectionName, MongoTemplate mongoTemplate, long ttl, boolean flushOnBoot) {
+        this(cacheName, collectionName, mongoTemplate, ttl, flushOnBoot, new JavaSerializer());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param cacheName      a cache name.
+     * @param collectionName a collection name.
+     * @param mongoTemplate  a {@link MongoTemplate} instance.
+     * @param ttl            a time-to-live (in seconds).
+     * @param flushOnBoot    a value that indicates if the collection must be always flush.
+     * @param serializer     a serializer.
+     */
+    public MongoCache(String cacheName, String collectionName, MongoTemplate mongoTemplate, long ttl, boolean flushOnBoot, Serializer serializer) {
         Assert.hasText(cacheName, "'cacheName' must be not null and not empty.");
         Assert.notNull(collectionName, "'collectionName' must be not null.");
         Assert.notNull(collectionName, "'mongoTemplate' must be not null.");
@@ -111,6 +140,7 @@ public class MongoCache implements Cache {
         this.mongoTemplate = mongoTemplate;
         this.cacheName = cacheName;
         this.ttl = ttl;
+        this.serializer = serializer == null ? new JavaSerializer() : serializer;
 
         initialize();
     }
@@ -269,10 +299,7 @@ public class MongoCache implements Cache {
     private Object deserialize(String value) throws IOException, ClassNotFoundException {
         final Base64.Decoder decoder = Base64.getDecoder();
         final byte[] data = decoder.decode(value);
-        try (final ByteArrayInputStream buffer = new ByteArrayInputStream(data);
-                final ObjectInputStream output = new ObjectInputStream(buffer)) {
-            return output.readObject();
-        }
+        return serializer.deserialize(data);
     }
 
     private Object getFromCache(Object key) {
@@ -307,16 +334,8 @@ public class MongoCache implements Cache {
     }
 
     private String serialize(Object value) throws IOException {
-        try (final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                final ObjectOutputStream output = new ObjectOutputStream(buffer)) {
-
-            output.writeObject(value);
-
-            final byte[] data = buffer.toByteArray();
-
-            final Base64.Encoder encoder = Base64.getEncoder();
-            return encoder.encodeToString(data);
-        }
+        final Base64.Encoder encoder = Base64.getEncoder();
+        return encoder.encodeToString(serializer.serialize(value));
     }
 
     private Index createExpireIndex() {
