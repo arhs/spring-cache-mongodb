@@ -67,8 +67,6 @@ public class MongoCache implements Cache {
     private final MongoTemplate mongoTemplate;
     private final long ttl;
 
-    private final Object lock = new Object();
-
     /**
      * Constructor.
      *
@@ -168,7 +166,9 @@ public class MongoCache implements Cache {
             return (T) cached;
         }
 
-        synchronized (lock) {
+        final Object dynamicLock = ((String) key).intern();
+
+        synchronized (dynamicLock) {
             cached = getFromCache(key);
             if (cached != null) {
                 return (T) cached;
