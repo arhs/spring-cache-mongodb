@@ -69,7 +69,7 @@ public class MongoCache implements Cache {
     private final long ttl;
 
     private final Object lock = new Object();
-    private Serializer serializer;
+    private final Serializer serializer;
 
     /**
      * Constructor.
