@@ -244,6 +244,18 @@ public class MongoCache implements Cache {
         return mongoTemplate;
     }
 
+    public MongoTemplate getMongoTemplate() {
+        return mongoTemplate;
+    }
+
+    public Serializer getSerializer() {
+        return serializer;
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
     /**
      * Returns the TTL value for this cache.
      *

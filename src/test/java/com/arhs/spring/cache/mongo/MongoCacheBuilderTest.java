@@ -1,6 +1,7 @@
 package com.arhs.spring.cache.mongo;
 
 import com.arhs.spring.cache.mongo.serializer.JavaSerializer;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ public class MongoCacheBuilderTest {
 	private static final String CACHE_NAME = "cache";
 	private static final String COLLECTION_NAME = "test";
 	private static final long TTL = 0;
+	private static final JavaSerializer serializer = new JavaSerializer();
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -26,10 +28,17 @@ public class MongoCacheBuilderTest {
 			mongoTemplate,
 			CACHE_NAME
 		);
-		builder.withSerializer(new JavaSerializer());
+
+		builder.withSerializer(serializer);
 		builder.withTTL(TTL);
 		builder.withFlushOnBoot(false);
-		builder.build();
+
+		MongoCache cache = builder.build();
+		Assert.assertEquals(COLLECTION_NAME, cache.getCollectionName());
+		Assert.assertEquals(mongoTemplate, cache.getMongoTemplate());
+		Assert.assertEquals(CACHE_NAME, cache.getCacheName());
+		Assert.assertEquals(serializer, cache.getSerializer());
+		Assert.assertEquals(TTL, cache.getTtl());
 	}
 
 	@Test
@@ -41,7 +50,12 @@ public class MongoCacheBuilderTest {
 		);
 		builder.withTTL(TTL);
 		builder.withFlushOnBoot(false);
-		builder.build();
+		MongoCache cache = builder.build();
+
+		Assert.assertEquals(COLLECTION_NAME, cache.getCollectionName());
+		Assert.assertEquals(mongoTemplate, cache.getMongoTemplate());
+		Assert.assertEquals(CACHE_NAME, cache.getCacheName());
+		Assert.assertEquals(TTL, cache.getTtl());
 	}
 
 }
