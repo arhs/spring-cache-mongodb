@@ -37,5 +37,4 @@ public class HessianSerializerTest {
 		Assert.assertEquals(date, out.date);
 	}
 
-
 }

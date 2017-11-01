@@ -7,49 +7,54 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-/**
- * Adapts HessianSerializer so it can be used in Redis. User: msellers Date:
- * 9/3/14 Time: 10:17 AM
- */
 public class HessianSerializer implements Serializer {
 
-	private static final Logger m_logger = LoggerFactory.getLogger(HessianSerializer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HessianSerializer.class);
 
 	@Override
 	public byte[] serialize(Object obj) {
-		try {
+		Hessian2Output out = null;
+
+		try (
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			Hessian2Output out = new Hessian2Output(bos);
+		) {
+			out = new Hessian2Output(bos);
+
 			out.startMessage();
 			out.writeObject(obj);
 			out.completeMessage();
 			out.close();
-			byte[] array = bos.toByteArray();
 
-			return array;
+			return bos.toByteArray();
 		} catch (Exception e) {
-			m_logger.error("Error Serializing a value to be put into the Redis cache", e);
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException ex) {
+				}
+			}
+			LOGGER.error("Error Serializing a value to be put into the Redis cache", e);
 			throw new RuntimeException(e.getMessage());
 		}
 	}
 
 	@Override
 	public Object deserialize(byte[] bytes) {
-		try {
-			Object toReturn = null;
+		if (bytes == null) {
+			return null;
+		}
 
-			if (bytes != null) {
-				ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
-				Hessian2Input in = new Hessian2Input(bin);
-				in.startMessage();
+		try (
+			ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+		) {
+			Hessian2Input in = new Hessian2Input(bin);
+			in.startMessage();
 
-				toReturn = in.readObject();
-			}
-
-			return toReturn;
+			return in.readObject();
 		} catch (Exception e) {
-			m_logger.error("Error De-Serializing a value from the Redis cache", e);
+			LOGGER.error("Error De-Serializing a value from the Redis cache", e);
 			throw new RuntimeException(e.getMessage());
 		}
 	}
