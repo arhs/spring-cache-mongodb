@@ -23,6 +23,7 @@
  */
 package com.arhs.spring.cache.mongo;
 
+import com.arhs.spring.cache.mongo.serializer.Serializer;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.Assert;
 
@@ -42,6 +43,7 @@ public class MongoCacheBuilder {
     private String collectionName;
     private MongoTemplate mongoTemplate;
     private long ttl;
+    private Serializer serializer;
 
     /**
      * Constructor.
@@ -79,7 +81,7 @@ public class MongoCacheBuilder {
      * @return a {@link MongoCache} instance.
      */
     public MongoCache build() {
-        return new MongoCache(cacheName, collectionName, mongoTemplate, ttl, flushOnBoot);
+        return new MongoCache(cacheName, collectionName, mongoTemplate, ttl, flushOnBoot, serializer);
     }
 
     /**
@@ -101,6 +103,11 @@ public class MongoCacheBuilder {
      */
     public MongoCacheBuilder withTTL(long ttl) {
         this.ttl = ttl;
+        return this;
+    }
+
+    public MongoCacheBuilder withSerializer(Serializer serializer) {
+        this.serializer = serializer;
         return this;
     }
 
