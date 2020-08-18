@@ -23,15 +23,19 @@
  */
 package com.arhs.spring.cache.mongo;
 
-import com.mongodb.MongoClient;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import cz.jirutka.spring.embedmongo.EmbeddedMongoBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Arrays;
 
 /**
  * Spring Configuration for basic integration tests.
@@ -43,7 +47,6 @@ public class TestConfiguration {
 
     private static final String DATABASE_NAME = "test";
     private static final String IP_ADDRESS = "127.0.0.1";
-    private static final String VERSION = "2.4.5";
 
     /**
      * Gets a {@link MongoTemplate} instance.
@@ -54,8 +57,9 @@ public class TestConfiguration {
     @Bean
     public MongoTemplate mongoTemplate() throws IOException {
         final int port = allocateRandomPort();
-        final MongoClient mongoClient = new EmbeddedMongoBuilder().version(VERSION).bindIp(IP_ADDRESS).port(port).build();
-        final SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongoClient, DATABASE_NAME);
+        new EmbeddedMongoBuilder().bindIp(IP_ADDRESS).port(port).build();
+        final MongoClient mongoClient = createMongoClientForPort(port);
+        final SimpleMongoClientDbFactory simpleMongoDbFactory = new SimpleMongoClientDbFactory(mongoClient, DATABASE_NAME);
 
         return new MongoTemplate(simpleMongoDbFactory);
     }
@@ -72,4 +76,12 @@ public class TestConfiguration {
         }
     }
 
+    private static MongoClient createMongoClientForPort(int port) {
+        return MongoClients.create(
+                MongoClientSettings.builder()
+                        .applyToClusterSettings(builder ->
+                                builder.hosts(Arrays.asList(
+                                        new ServerAddress(IP_ADDRESS, port))))
+                        .build());
+    }
 }

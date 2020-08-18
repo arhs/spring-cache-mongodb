@@ -25,7 +25,7 @@ package com.arhs.spring.cache.mongo;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.springframework.boot.test.util.EnvironmentTestUtils;
+import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -54,7 +54,7 @@ public class UnitTestBase {
         AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 
         // Adds environment.
-        EnvironmentTestUtils.addEnvironment(applicationContext, environment);
+        TestPropertyValues.of(environment).applyTo(applicationContext);
 
         // Registers the configuration class and auto-configuration classes.
         applicationContext.register(TestConfiguration.class);
